@@ -1,4 +1,4 @@
-#include "Texture.h"
+ï»¿#include "Texture.h"
 
 #include <filesystem>
 
@@ -11,16 +11,16 @@ namespace UniDx
 
 bool Texture::load(const std::wstring& filePath)
 {
-	// WIC‰æ‘œ‚ğ“Ç‚İ‚Ş
+	// WICç”»åƒã‚’èª­ã¿è¾¼ã‚€
 	auto image = std::make_unique<DirectX::ScratchImage>();
 	if (FAILED(DirectX::LoadFromWICFile(filePath.c_str(), DirectX::WIC_FLAGS_NONE, &m_info, *image)))
 	{
-		// ¸”s
+		// å¤±æ•—
 		m_info = {};
 		return false;
 	}
 
-	// ƒ~ƒbƒvƒ}ƒbƒv‚Ì¶¬
+	// ãƒŸãƒƒãƒ—ãƒãƒƒãƒ—ã®ç”Ÿæˆ
 	if (m_info.mipLevels == 1)
 	{
 		auto mipChain = std::make_unique<DirectX::ScratchImage>();
@@ -30,10 +30,10 @@ bool Texture::load(const std::wstring& filePath)
 		}
 	}
 
-	// ƒŠƒ\[ƒX‚ÆƒVƒF[ƒ_[ƒŠƒ\[ƒXƒrƒ…[‚ğì¬
+	// ãƒªã‚½ãƒ¼ã‚¹ã¨ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒªã‚½ãƒ¼ã‚¹ãƒ“ãƒ¥ãƒ¼ã‚’ä½œæˆ
 	if (FAILED(DirectX::CreateShaderResourceView(D3DManager::instance->GetDevice().Get(), image->GetImages(), image->GetImageCount(), m_info, &m_srv)))
 	{
-		// ¸”s
+		// å¤±æ•—
 		m_info = {};
 		return false;
 	}
@@ -41,14 +41,35 @@ bool Texture::load(const std::wstring& filePath)
 	std::filesystem::path path(filePath);
 	fileName = path.filename();
 
-	// ¬Œ÷I
+	// ã‚µãƒ³ãƒ—ãƒ©
+	D3D11_SAMPLER_DESC samplerDesc;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	samplerDesc.MinLOD = -FLT_MAX;
+	samplerDesc.MaxLOD = FLT_MAX;
+
+	ID3D11SamplerState* pState;
+	D3DManager::instance->GetDevice()->CreateSamplerState(&samplerDesc, &pState);
+	samplerState = pState;
+
+	// æˆåŠŸï¼
 	return true;
 }
 
 
 void Texture::setForRender() const
 {
-	D3DManager::instance->GetContext()->PSSetShaderResources(0, 1, m_srv.GetAddressOf());
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®ãƒã‚¤ãƒ³ãƒ‰
+	D3DManager::instance->GetContext()->PSSetShaderResources(UNIDX_PS_SLOT_ALBEDO, 1, m_srv.GetAddressOf());
+
+	// ã‚µãƒ³ãƒ—ãƒ©ã®ãƒã‚¤ãƒ³ãƒ‰
+	ID3D11SamplerState* pState = samplerState.Get();
+	D3DManager::instance->GetContext()->PSSetSamplers(UNIDX_PS_SLOT_ALBEDO, 1, &pState);
 }
 
 }

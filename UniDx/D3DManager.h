@@ -9,6 +9,13 @@
 #include "UniDxDefine.h"
 #include "Singleton.h"
 
+
+constexpr UINT UNIDX_PS_SLOT_LIGHTS = 0;  // t0
+constexpr UINT UNIDX_PS_SLOT_LIGHT_INDICES = 1;  // t1
+constexpr UINT UNIDX_PS_SLOT_ALBEDO = 4;  // t4
+constexpr UINT UNIDX_PS_SLOT_NORMAL = 5;  // t5
+
+
 namespace UniDx{
 
 // ----------------------------------------------------------

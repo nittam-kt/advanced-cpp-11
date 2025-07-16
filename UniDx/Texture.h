@@ -28,7 +28,7 @@ public:
     void setForRender() const;
 
 protected:
-    ComPtr<ID3D11Buffer> constantBuffer;
+    ComPtr<ID3D11SamplerState> samplerState;
     std::wstring fileName;
 
     // シェーダーリソースビュー(画像データ読み取りハンドル)

@@ -18,17 +18,6 @@ using Microsoft::WRL::ComPtr;
 namespace UniDx
 {
 
-enum VertexType
-{
-	VertexTypeUnknown,
-	VertexTypeP,
-	VertexTypePN,
-	VertexTypePT,
-	VertexTypePC,
-	VertexTypePNT,
-	VertexTypePNC,
-};
-
 // 頂点バッファ
 struct VertexP
 {
@@ -42,7 +31,6 @@ struct VertexP
 	void setUV3(const Vector2& v) {}
 	void setUV4(const Vector2& v) {}
 
-	static VertexType type() { return VertexTypeP; }
 	static const std::array< D3D11_INPUT_ELEMENT_DESC, 1> layout;
 };
 struct VertexPN
@@ -58,7 +46,6 @@ struct VertexPN
 	void setUV3(const Vector2& v) {}
 	void setUV4(const Vector2& v) {}
 
-	static VertexType type() { return VertexTypePN; }
 	static const std::array< D3D11_INPUT_ELEMENT_DESC, 2> layout;
 };
 struct VertexPT
@@ -74,7 +61,6 @@ struct VertexPT
 	void setUV3(const Vector2& v) {}
 	void setUV4(const Vector2& v) {}
 
-	static VertexType type() { return VertexTypePT; }
 	static const std::array< D3D11_INPUT_ELEMENT_DESC, 2> layout;
 };
 struct VertexPC
@@ -90,7 +76,6 @@ struct VertexPC
 	void setUV3(const Vector2& v) {}
 	void setUV4(const Vector2& v) {}
 
-	static VertexType type() { return VertexTypePC; }
 	static const std::array< D3D11_INPUT_ELEMENT_DESC, 2> layout;
 };
 struct VertexPNT
@@ -107,7 +92,6 @@ struct VertexPNT
 	void setUV3(const Vector2& v) {}
 	void setUV4(const Vector2& v) {}
 
-	static VertexType type() { return VertexTypePNT; }
 	static const std::array< D3D11_INPUT_ELEMENT_DESC, 3> layout;
 };
 struct VertexPNC
@@ -124,7 +108,6 @@ struct VertexPNC
 	void setUV3(const Vector2& v) {}
 	void setUV4(const Vector2& v) {}
 
-	static VertexType type() { return VertexTypePNC; }
 	static const std::array< D3D11_INPUT_ELEMENT_DESC, 3> layout;
 };
 
@@ -135,20 +118,19 @@ struct VertexPNC
 class Shader : public Object
 {
 public:
-	Shader() : Object([this]() {return fileName;}), vertexType(VertexTypeUnknown) {}
+	Shader() : Object([this]() {return fileName;}) {}
 
 	// シェーダーのパスを指定してコンパイル
-	bool compile(const std::wstring& filePath, const D3D11_INPUT_ELEMENT_DESC* layout, size_t layout_size, VertexType type = VertexTypeUnknown);
+	bool compile(const std::wstring& filePath, const D3D11_INPUT_ELEMENT_DESC* layout, size_t layout_size);
 
 	template<typename TVertex>
-	bool compile(const std::wstring& filePath) { return compile(filePath, TVertex::layout.data(), TVertex::layout.size(), TVertex::type()); }
+	bool compile(const std::wstring& filePath) { return compile(filePath, TVertex::layout.data(), TVertex::layout.size()); }
 
 	// 描画のため、D3DDeviceContextにこのシェーダーをセット
 	void setToContext() const;
 
 protected:
 	std::wstring fileName;
-	VertexType vertexType;
 
 private:
 	ComPtr<ID3D11VertexShader>	m_vertex = nullptr;	// 頂点シェーダー

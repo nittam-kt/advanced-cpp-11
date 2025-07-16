@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#include <d3d11.h>
-#include <d3dcompiler.h>
-#include <wrl/client.h>
-
 #include "UniDxDefine.h"
 #include "Debug.h"
 

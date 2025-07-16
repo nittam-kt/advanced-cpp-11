@@ -1,9 +1,6 @@
-// 0”Ô‚ÌƒeƒNƒXƒ`ƒƒƒXƒƒbƒg‚ğg—p‚·‚é
-Texture2D texture0 : register(t0);
-
-// 0”Ô‚ÌƒTƒ“ƒvƒ‰ƒXƒƒbƒg‚ğg—p‚·‚é
-SamplerState sampler0 : register(s0);
-
+// ----------------------------------------------------------
+// é ‚ç‚¹
+// ----------------------------------------------------------
 cbuffer VSConstants : register(b0)
 {
     float4x4 world;
@@ -11,43 +8,47 @@ cbuffer VSConstants : register(b0)
     float4x4 projection;
 };
 
-// ’¸“_ƒVƒF[ƒ_[‚Ö“ü—Í‚·‚éƒf[ƒ^
+// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã¸å…¥åŠ›ã™ã‚‹ãƒ‡ãƒ¼ã‚¿
 struct VSInput
 {
-    float4 pos : POSITION;
+    float3 pos : POSITION;
     float2 uv : TEXUV;
 };
 
 
-// ’¸“_ƒVƒF[ƒ_[‚©‚ço—Í‚·‚éƒf[ƒ^
+// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‹ã‚‰å‡ºåŠ›ã™ã‚‹ãƒ‡ãƒ¼ã‚¿
 struct PSInput
 {
-    float4 pos : SV_Position; // ’¸“_‚ÌÀ•W(Ë‰eÀ•WŒn)
-    float2 uv : TEXCOORD0; // UVÀ•W
+    float4 pos : SV_Position; // é ‚ç‚¹ã®åº§æ¨™(å°„å½±åº§æ¨™ç³»)
+    float2 uv : TEXCOORD0; // UVåº§æ¨™
 };
- 
-// ----------------------------------------------------------
-// ’¸“_ƒVƒF[ƒ_[
-// ----------------------------------------------------------
+
+// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
 PSInput VS(VSInput vin)
 {
     PSInput Out;
-    float4 p = mul(world, vin.pos);
+    float4 p = float4(vin.pos.xyz, 1);
+    p = mul(world, p);
     p = mul(view, p);
     p = mul(projection, p);
     Out.pos = p;
     Out.uv = vin.uv;
     return Out;
 }
+
  
 // ----------------------------------------------------------
-// ƒsƒNƒZƒ‹ƒVƒF[ƒ_[
+// ãƒ”ã‚¯ã‚»ãƒ«
 // ----------------------------------------------------------
+Texture2D texture0 : register(t4);      // 4ç•ªã®ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‚¹ãƒ­ãƒƒãƒˆã‚’ä½¿ç”¨ï¼ˆUNIDX_PS_SLOT_ALBEDOï¼‰
+SamplerState sampler0 : register(s4);   // 4ç•ªã®ã‚µãƒ³ãƒ—ãƒ©ã‚¹ãƒ­ãƒƒãƒˆã‚’ä½¿ç”¨
+
+// ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼
 float4 PS(PSInput In) : SV_Target0
 {
-    // ƒeƒNƒXƒ`ƒƒ‚©‚çF‚ğæ“¾
+    // ãƒ†ã‚¯ã‚¹ãƒãƒ£ã‹ã‚‰è‰²ã‚’å–å¾—
     float4 texColor = texture0.Sample(sampler0, In.uv);
  
-    // ƒeƒNƒXƒ`ƒƒ‚ÌF‚ğo—Í
+    // ãƒ†ã‚¯ã‚¹ãƒãƒ£ã®è‰²ã‚’å‡ºåŠ›
     return texColor;
 }

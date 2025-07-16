@@ -36,7 +36,7 @@ public:
         materials.push_back(std::make_unique<Material>());
 
         // マテリアルをシェーダーを読み込んで初期化
-        materials.back()->shader.compile<VertexPT>(shaderPath);
+        materials.back()->shader.compile<TVertex>(shaderPath);
     }
 
     // シェーダーとテクスチャを読み込んでマテリアルを追加

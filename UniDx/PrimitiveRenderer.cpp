@@ -69,6 +69,10 @@ void CubeRenderer::OnEnable()
     submesh->normals = std::span<const Vector3>(cube_normals, std::size(cube_normals));
     submesh->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     submesh->createBuffer<VertexPT>();
+    if (createBufer_ != nullptr)
+    {
+        createBufer_(submesh.get());
+    }
 
     mesh.submesh.push_back(std::move(submesh));
 }
@@ -93,12 +97,12 @@ void SphereRenderer::createVertex()
             float u = static_cast<float>(lon) / (longitude - 1); // 0～1
             float theta = u * DirectX::XM_2PI; // 0～2π
 
-            float x = std::sin(phi) * std::cos(theta) * 0.5f;
-            float y = std::cos(phi) * 0.5f;
-            float z = std::sin(phi) * std::sin(theta) * 0.5f;
+            float x = std::sin(phi) * std::cos(theta);
+            float y = std::cos(phi);
+            float z = std::sin(phi) * std::sin(theta);
 
-            positions.emplace_back(x, y, z);
-            normals.emplace_back(x * 2.0f, y * 2.0f, z * 2.0f); // 半径0.5なので法線は2倍
+            positions.emplace_back(x * 0.5f, y * 0.5f, z * 0.5f); // 半径0.5
+            normals.emplace_back(x, y, z);
             uvs.emplace_back(u, v);
         }
     }
@@ -139,7 +143,10 @@ void SphereRenderer::OnEnable()
     submesh->uv = std::span<const Vector2>(uvs.data(), uvs.size());
     submesh->indices = std::span<const uint32_t>(indices.data(), indices.size());
     submesh->topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-    submesh->createBuffer<VertexPT>();
+    if (createBufer_ != nullptr)
+    {
+        createBufer_(submesh.get());
+    }
 
     mesh.submesh.push_back(std::move(submesh));
 }

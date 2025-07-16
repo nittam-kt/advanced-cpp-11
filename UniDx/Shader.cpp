@@ -1,4 +1,4 @@
-#include "Shader.h"
+ï»¿#include "Shader.h"
 
 #include <filesystem>
 #include <d3d11.h>
@@ -13,7 +13,7 @@ using namespace DirectX::SimpleMath;
 
 namespace UniDx
 {
-// Še’¸“_ƒoƒbƒtƒ@‚ÌƒŒƒCƒAƒEƒg
+// å„é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆ
 const std::array< D3D11_INPUT_ELEMENT_DESC, 1> VertexP::layout =
 {
 	D3D11_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
@@ -47,44 +47,51 @@ const std::array< D3D11_INPUT_ELEMENT_DESC, 3> VertexPNC::layout =
 };
 
 
-bool Shader::compile(const std::wstring& filePath, const D3D11_INPUT_ELEMENT_DESC* layout, size_t layout_size, VertexType type)
+bool Shader::compile(const std::wstring& filePath, const D3D11_INPUT_ELEMENT_DESC* layout, size_t layout_size)
 {
-	// ’¸“_ƒf[ƒ^‚Ìƒ^ƒCƒv
-	vertexType = type;
+	ID3DBlob* error = nullptr;
 
-	// ’¸“_ƒVƒF[ƒ_[‚ğ“Ç‚İ‚İ•ƒRƒ“ƒpƒCƒ‹
+	// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’èª­ã¿è¾¼ã¿ï¼†ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
 	ComPtr<ID3DBlob> compiledVS;
-	if (FAILED(D3DCompileFromFile(filePath.c_str(), nullptr, nullptr, "VS", "vs_5_0", 0, 0, &compiledVS, nullptr)))
+	if (FAILED(D3DCompileFromFile(filePath.c_str(), nullptr, nullptr, "VS", "vs_5_0", 0, 0, &compiledVS, &error)))
 	{
-		Debug::Log(L"’¸“_ƒVƒF[ƒ_[‚ÌƒRƒ“ƒpƒCƒ‹ƒGƒ‰[");
+		Debug::Log(L"é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã‚¨ãƒ©ãƒ¼");
+		if (error)
+		{
+			Debug::Log(static_cast<const char*>(error->GetBufferPointer()));
+		}
 		abort();
 		return false;
 	}
-	// ƒsƒNƒZƒ‹ƒVƒF[ƒ_[‚ğ“Ç‚İ‚İ•ƒRƒ“ƒpƒCƒ‹
+	// ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚’èª­ã¿è¾¼ã¿ï¼†ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«
 	ComPtr<ID3DBlob> compiledPS;
-	if (FAILED(D3DCompileFromFile(filePath.c_str(), nullptr, nullptr, "PS", "ps_5_0", 0, 0, &compiledPS, nullptr)))
+	if (FAILED(D3DCompileFromFile(filePath.c_str(), nullptr, nullptr, "PS", "ps_5_0", 0, 0, &compiledPS, &error)))
 	{
-		Debug::Log(L"ƒsƒNƒZƒ‹ƒVƒF[ƒ_[ƒVƒF[ƒ_[‚ÌƒRƒ“ƒpƒCƒ‹ƒGƒ‰[");
+		Debug::Log(L"ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã‚¨ãƒ©ãƒ¼");
+		if (error)
+		{
+			Debug::Log(static_cast<const char*>(error->GetBufferPointer()));
+		}
 		return false;
 	}
 
-	// ’¸“_ƒVƒF[ƒ_[ì¬
+	// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ä½œæˆ
 	if (FAILED(D3DManager::instance->GetDevice()->CreateVertexShader(compiledVS->GetBufferPointer(), compiledVS->GetBufferSize(), nullptr, &m_vertex)))
 	{
-		Debug::Log(L"’¸“_ƒVƒF[ƒ_[‚Ìì¬ƒGƒ‰[");
+		Debug::Log(L"é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ä½œæˆã‚¨ãƒ©ãƒ¼");
 		return false;
 	}
-	// ƒsƒNƒZƒ‹ƒVƒF[ƒ_[ì¬
+	// ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ä½œæˆ
 	if (FAILED(D3DManager::instance->GetDevice()->CreatePixelShader(compiledPS->GetBufferPointer(), compiledPS->GetBufferSize(), nullptr, &m_pixel)))
 	{
-		Debug::Log(L"ƒsƒNƒZƒ‹ƒVƒF[ƒ_[‚Ìì¬ƒGƒ‰[");
+		Debug::Log(L"ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ä½œæˆã‚¨ãƒ©ãƒ¼");
 		return false;
 	}
 
-	// ’¸“_ƒCƒ“ƒvƒbƒgƒŒƒCƒAƒEƒgì¬
+	// é ‚ç‚¹ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆä½œæˆ
 	if (FAILED(D3DManager::instance->GetDevice()->CreateInputLayout(layout, (UINT)layout_size, compiledVS->GetBufferPointer(), compiledVS->GetBufferSize(), &m_inputLayout)))
 	{
-		Debug::Log(L"’¸“_ƒCƒ“ƒvƒbƒgƒŒƒCƒAƒEƒg‚Ìì¬ƒGƒ‰[");
+		Debug::Log(L"é ‚ç‚¹ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã®ä½œæˆã‚¨ãƒ©ãƒ¼");
 		return false;
 	}
 

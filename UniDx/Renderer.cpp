@@ -79,13 +79,13 @@ void Renderer::setShaderForRender() const
 // -----------------------------------------------------------------------------
 void MeshRenderer::Render(const Camera& camera) const
 {
-    // 現在のTransformとカメラの情報をシェーダーのConstantBufferに転送
-    Renderer::updatePositionCameraCBuffer(camera);
-
     //-----------------------------
     // シェーダーをセット
     //-----------------------------
     setShaderForRender();
+
+    // 現在のTransformとカメラの情報をシェーダーのConstantBufferに転送
+    Renderer::updatePositionCameraCBuffer(camera);
 
     //-----------------------------
     // 描画実行

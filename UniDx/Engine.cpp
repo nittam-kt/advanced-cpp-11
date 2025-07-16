@@ -27,6 +27,7 @@ using namespace DirectX::SimpleMath;
 #include "Renderer.h"
 #include "Transform.h"
 #include "Physics.h"
+#include "LightManager.h"
 #include "Input.h"
 #include "Debug.h"
 
@@ -60,6 +61,9 @@ void Engine::Initialize(HWND hWnd)
 
     // 物理エンジンのインスタンス作成
     Physics::create();
+
+    // ライトマネージャのインスタンス作成
+    LightManager::create();
 
     // フォント初期化
     g_spriteBatch = std::make_unique<SpriteBatch>(D3DManager::instance->GetContext().Get());
@@ -247,6 +251,9 @@ void Engine::render()
     }
 
     g_spriteBatch->End();
+
+    // ライトバッファの更新と転送
+    LightManager::instance->updateLightCBuffer();
 
     // 各コンポーネントの Render()
     Camera* camera = Camera::main;

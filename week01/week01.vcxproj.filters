@@ -255,6 +255,12 @@
     <ClInclude Include="..\UniDx\GameObject_impl.h">
       <Filter>UniDx</Filter>
     </ClInclude>
+    <ClInclude Include="..\UniDx\Light.h">
+      <Filter>UniDx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\UniDx\LightManager.h">
+      <Filter>UniDx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\UniDx\Shader.cpp">
@@ -323,6 +329,12 @@
     <ClCompile Include="..\UniDx\Collider.cpp">
       <Filter>UniDx</Filter>
     </ClCompile>
+    <ClCompile Include="..\UniDx\LightManager.cpp">
+      <Filter>UniDx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UniDx\Light.cpp">
+      <Filter>UniDx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="week01.rc">
@@ -351,6 +363,12 @@
       <Filter>UniDx</Filter>
     </FxCompile>
     <FxCompile Include="Resource\Albedo.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\AlbedoShade.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Resource\SimpleShade.hlsl">
       <Filter>リソース ファイル</Filter>
     </FxCompile>
   </ItemGroup>
